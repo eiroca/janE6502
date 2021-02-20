@@ -1,27 +1,23 @@
 unit MiniWin;
 
-{enables the emulator to access several libraries}
-{$A+} {$Z1}
+{enables the emulator to access several libraries}{$A+} {$Z1}
 interface
 
 type
   DWORD = longword;
   OPENFILENAME = array[0..18] of longword;
-  TRect = record
-    case byte of
-      0: (A: array[0..3] of integer);
-      1: (Left, Top, Right, Bottom: integer);
-  end;
+  TRect = record case byte of 0: (A: array[0..3] of integer);1: (Left, Top, Right, Bottom: integer);  end;
   tMSG = array[0..6] of longword;
   tWNDCLASS = array[0..9] of longword;
-  pTimeCaps = ^tTC;
-  tTC = record wPeriodMin, wPeriodMax: longword end;
-  HDC = longword;
-  HMENU = longword;
+  PTimeCaps = ^TTimeCaps;
+  TTimeCaps = record
+    wPeriodMin: longword;
+    wPeriodMax: longword;
+  end;
+  HDC = longword; HMENU = longword;
   TSecurityAttributes = array[0..2] of longword;
   PSecurityAttributes = ^TSecurityAttributes;
-  pOverlapped = ^TOverlapped;
-  TOverlapped = array[0..4] of longword;
+  pOverlapped = ^TOverlapped; TOverlapped = array[0..4] of longword;
 
 function Rect(rLft, rTop, rRgt, rBtm: integer): TRect;
 //KERNEL
@@ -62,25 +58,19 @@ function SetBkColor(DC: HDC; Color: longword): longword; stdcall; external 'gdi3
 function TextOut(DC: HDC; X, Y: integer; Str: PChar; Count: integer): boolean; stdcall; external 'gdi32.dll' Name 'TextOutA';
 function CreateSolidBrush(p1: longword): longword; stdcall; external 'gdi32.dll';
 //MMSystem, too:
-function timebeginPeriod(uPeriod: longword): longword; stdcall; external 'winMM.dll' Name 'timebeginPeriod';
+function timeBeginPeriod(uPeriod: longword): longword; stdcall; external 'winMM.dll' Name 'timeBeginPeriod';
 function timeEndPeriod(uPeriod: longword): longword; stdcall; external 'winMM.dll' Name 'timeEndPeriod';
 function timeSetEvent(uDelay, uResolution: longword; lpFunction: pointer; dwUser: longword; uFlags: longword): longword; stdcall; external 'winMM.dll' Name 'timeSetEvent';
 function timeKillEvent(uTimerID: longword): longword; stdcall; external 'winMM.dll' Name 'timeGetDevCaps';
-function timeGetDevCaps(uPTC: pTimeCaps; bTime: longword): longword; stdcall; external 'winMM.dll' Name 'timeGetDevCaps';
-
+function timeGetDevCaps(uPTC: PTimeCaps; bTime: longword): longword; stdcall; external 'winMM.dll' Name 'timeGetDevCaps';
 implementation
 
 function Rect(rLft, rTop, rRgt, rBtm: integer): TRect;
 begin
   with Result do begin
-    A[0] := rLft;
-    A[1] := rTop;
-    A[2] := rRgt;
-    A[3] := rBtm;
-  end;
+    A[0] := rLft;A[1] := rTop;A[2] := rRgt;A[3] := rBtm;
+end;
 end;
 
 {$A-}
-
 end.
-

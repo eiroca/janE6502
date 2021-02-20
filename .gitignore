@@ -2,3 +2,5 @@
 *.bak
 *.lps
 **/Thumbs.db
+ROM/basic
+ROM/kernal
